@@ -1,25 +1,98 @@
 #include <iostream>
-#include <cmath>
 using namespace std;
 
-struct Point {
-    double x;
-    double y;
+struct Fraction {
+    int numer;
+    int denomin;
+
+    Fraction(int num, int denom) : numer(num), denomin(denom) {
+        if (denomin < 0) {
+            numer = -numer;
+            denomin = -denomin;
+        }
+        reduce();
+    }
+
+    int gcd(int a, int b) {
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    void reduce() {
+        int divisor = gcd(abs(numer), abs(denomin));
+        numer /= divisor;
+        denomin /= divisor;
+    }
+
+    void toProper() const {
+        int wholePart = numer / denomin;
+        int fractionalPart = abs(numer % denomin);
+        if (wholePart != 0) {
+            cout << wholePart << " ";
+        }
+        if (fractionalPart != 0) {
+            cout << fractionalPart << "/" << denomin;
+        }
+        if (wholePart == 0 && fractionalPart == 0) {
+            cout << 0;
+        }
+        cout << endl;
+    }
+
+    Fraction operator+(const Fraction& other) const {
+        int num = numer * other.denomin + other.numer * denomin;
+        int denom = denomin * other.denomin;
+        return Fraction(num, denom);
+    }
+
+    Fraction operator-(const Fraction& other) const {
+        int num = numer * other.denomin - other.numer * denomin;
+        int denom = denomin * other.denomin;
+        return Fraction(num, denom);
+    }
+
+    Fraction operator*(const Fraction& other) const {
+        int num = numer * other.numer;
+        int denom = denomin * other.denomin;
+        return Fraction(num, denom);
+    }
+
+    Fraction operator/(const Fraction& other) const {
+        int num = numer * other.denomin;
+        int denom = denomin * other.numer;
+        return Fraction(num, denom);
+    }
+
+    void print() const {
+        cout << numer << "/" << denomin << endl;
+    }
 };
 
-double calculateDistance(const Point& p1, const Point& p2) {
-    double dX = p1.x - p2.x;
-    double dY = p1.y - p2.y;
-    return sqrt(dX * dX + dY * dY);
-}
-
 int main() {
-    Point point1 = { 3.0, 4.0 };
-    Point point2 = { 7.0, 1.0 };
+    Fraction frac1(3, 4);
+    Fraction frac2(2, 3);
 
-    double distance = calculateDistance(point1, point2);
+    Fraction sum = frac1 + frac2;
+    Fraction difference = frac1 - frac2;
+    Fraction product = frac1 * frac2;
+    Fraction quotient = frac1 / frac2;
 
-    cout << "Distance between points (" << point1.x << ", " << point1.y << ") ³ (" << point2.x << ", " << point2.y << ") is " << distance << endl;
+    cout << "Sum: ";
+    sum.print();
+    cout << "Diff: ";
+    difference.print();
+    cout << "pRod: ";
+    product.print();
+    cout << "Qout: ";
+    quotient.print();
+
+    cout << "Shortened and translated fraction: ";
+    Fraction improper(9, 4);
+    improper.toProper();
 
     return 0;
 }
